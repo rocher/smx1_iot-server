@@ -1,0 +1,415 @@
+[
+    {
+        "id": "b42d36e0ce0e972f",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "ff746650977c53fc",
+        "type": "mqtt-broker",
+        "name": "docker mosquitto",
+        "broker": "mqtt.iot.net",
+        "port": 1883,
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": 4,
+        "keepalive": 60,
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "ce4bdd8437bd28fe",
+        "type": "influxdb",
+        "hostname": "127.0.0.1",
+        "port": 8086,
+        "protocol": "http",
+        "database": "database",
+        "name": "docker influxdb",
+        "usetls": false,
+        "tls": "",
+        "influxdbVersion": "2.0",
+        "url": "http://172.19.0.4:8086",
+        "timeout": 10,
+        "rejectUnauthorized": true
+    },
+    {
+        "id": "b43f5519c30ea704",
+        "type": "influxdb",
+        "hostname": "http://172.19.0.4:8086",
+        "port": 8086,
+        "protocol": "http",
+        "database": "inspalamos",
+        "name": "",
+        "usetls": false,
+        "tls": "",
+        "influxdbVersion": "1.8-flux",
+        "url": "http://localhost:8086",
+        "timeout": 10,
+        "rejectUnauthorized": true
+    },
+    {
+        "id": "53d6113ee914673c",
+        "type": "influxdb",
+        "hostname": "172.19.0.4",
+        "port": 8086,
+        "protocol": "http",
+        "database": "inspalamos",
+        "name": "",
+        "usetls": false,
+        "tls": "",
+        "influxdbVersion": "1.x",
+        "url": "http://localhost:8086",
+        "timeout": 10,
+        "rejectUnauthorized": true
+    },
+    {
+        "id": "cb2a26c9481b4307",
+        "type": "influxdb",
+        "hostname": "flux.iot.net",
+        "port": 8086,
+        "protocol": "http",
+        "database": "database",
+        "name": "docker influxdb",
+        "usetls": false,
+        "tls": "",
+        "influxdbVersion": "2.0",
+        "url": "http://flux.iot.net:8086",
+        "timeout": 10,
+        "rejectUnauthorized": true
+    },
+    {
+        "id": "87d2044afcf13a4d",
+        "type": "mqtt in",
+        "z": "b42d36e0ce0e972f",
+        "name": "",
+        "topic": "/test/#",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "ff746650977c53fc",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 190,
+        "y": 120,
+        "wires": [
+            [
+                "0df624b0a337ec1e",
+                "b06cd747ccc584de"
+            ]
+        ]
+    },
+    {
+        "id": "0df624b0a337ec1e",
+        "type": "debug",
+        "z": "b42d36e0ce0e972f",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 400,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "7518a06f20ef8fda",
+        "type": "influxdb out",
+        "z": "b42d36e0ce0e972f",
+        "d": true,
+        "influxdb": "ce4bdd8437bd28fe",
+        "name": "",
+        "measurement": "test",
+        "precision": "",
+        "retentionPolicy": "",
+        "database": "database",
+        "precisionV18FluxV20": "ms",
+        "retentionPolicyV18Flux": "",
+        "org": "inspalamos",
+        "bucket": "smx1",
+        "x": 710,
+        "y": 840,
+        "wires": []
+    },
+    {
+        "id": "272265cba52a03af",
+        "type": "inject",
+        "z": "b42d36e0ce0e972f",
+        "d": true,
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "0.5",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "iso",
+        "payloadType": "date",
+        "x": 250,
+        "y": 900,
+        "wires": [
+            [
+                "760561361ed4ac82"
+            ]
+        ]
+    },
+    {
+        "id": "760561361ed4ac82",
+        "type": "template",
+        "z": "b42d36e0ce0e972f",
+        "d": true,
+        "name": "temperatura interna",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "{\n    \"cmd\": \"temp_int\"\n}",
+        "output": "str",
+        "x": 470,
+        "y": 900,
+        "wires": [
+            [
+                "3955546ad36a44fc"
+            ]
+        ]
+    },
+    {
+        "id": "3955546ad36a44fc",
+        "type": "mqtt out",
+        "z": "b42d36e0ce0e972f",
+        "d": true,
+        "name": "",
+        "topic": "/cmd",
+        "qos": "2",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "ff746650977c53fc",
+        "x": 710,
+        "y": 900,
+        "wires": []
+    },
+    {
+        "id": "a90af9b3a911e57e",
+        "type": "mqtt in",
+        "z": "b42d36e0ce0e972f",
+        "d": true,
+        "name": "",
+        "topic": "/ret/temp/int/#",
+        "qos": "2",
+        "datatype": "json",
+        "broker": "ff746650977c53fc",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 210,
+        "y": 1100,
+        "wires": [
+            [
+                "640f5a2185ed378e"
+            ]
+        ]
+    },
+    {
+        "id": "25bcc097ff456b90",
+        "type": "template",
+        "z": "b42d36e0ce0e972f",
+        "d": true,
+        "name": "temperatura externa",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "{\n    \"cmd\": \"temp_ext\"\n}",
+        "output": "str",
+        "x": 480,
+        "y": 960,
+        "wires": [
+            [
+                "52b780518c88c6a8"
+            ]
+        ]
+    },
+    {
+        "id": "52b780518c88c6a8",
+        "type": "mqtt out",
+        "z": "b42d36e0ce0e972f",
+        "d": true,
+        "name": "",
+        "topic": "/cmd",
+        "qos": "2",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "ff746650977c53fc",
+        "x": 710,
+        "y": 960,
+        "wires": []
+    },
+    {
+        "id": "a645586140a4f06a",
+        "type": "inject",
+        "z": "b42d36e0ce0e972f",
+        "d": true,
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "6",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "3",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 250,
+        "y": 960,
+        "wires": [
+            [
+                "25bcc097ff456b90"
+            ]
+        ]
+    },
+    {
+        "id": "9dbddb3fd52bd09d",
+        "type": "mqtt in",
+        "z": "b42d36e0ce0e972f",
+        "d": true,
+        "name": "",
+        "topic": "/ret/temp/ext",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "ff746650977c53fc",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 210,
+        "y": 1040,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "f85d0554738a546a",
+        "type": "influxdb out",
+        "z": "b42d36e0ce0e972f",
+        "d": true,
+        "influxdb": "ce4bdd8437bd28fe",
+        "name": "",
+        "measurement": "temperatura externa",
+        "precision": "",
+        "retentionPolicy": "",
+        "database": "database",
+        "precisionV18FluxV20": "ms",
+        "retentionPolicyV18Flux": "",
+        "org": "inspalamos",
+        "bucket": "smx1",
+        "x": 580,
+        "y": 1020,
+        "wires": []
+    },
+    {
+        "id": "cd2a92bc2cc75fd0",
+        "type": "influxdb out",
+        "z": "b42d36e0ce0e972f",
+        "d": true,
+        "influxdb": "ce4bdd8437bd28fe",
+        "name": "Influx temperatura_interna",
+        "measurement": "",
+        "precision": "",
+        "retentionPolicy": "",
+        "database": "database",
+        "precisionV18FluxV20": "ms",
+        "retentionPolicyV18Flux": "",
+        "org": "inspalamos",
+        "bucket": "smx1",
+        "x": 670,
+        "y": 1100,
+        "wires": []
+    },
+    {
+        "id": "640f5a2185ed378e",
+        "type": "function",
+        "z": "b42d36e0ce0e972f",
+        "d": true,
+        "name": "Format data",
+        "func": "let tags = {};\nlet fields = {};\n\ntags.pid = msg.payload.pid;\nfields.value = msg.payload.value;\n\nmsg.measurement = \"temperatura_interna\";\nmsg.payload = [fields, tags];\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 430,
+        "y": 1100,
+        "wires": [
+            [
+                "cd2a92bc2cc75fd0"
+            ]
+        ]
+    },
+    {
+        "id": "b06cd747ccc584de",
+        "type": "influxdb out",
+        "z": "b42d36e0ce0e972f",
+        "influxdb": "cb2a26c9481b4307",
+        "name": "",
+        "measurement": "test",
+        "precision": "",
+        "retentionPolicy": "",
+        "database": "database",
+        "precisionV18FluxV20": "ms",
+        "retentionPolicyV18Flux": "",
+        "org": "inspalamos",
+        "bucket": "smx1",
+        "x": 450,
+        "y": 200,
+        "wires": []
+    }
+]
