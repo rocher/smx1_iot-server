@@ -1,5 +1,5 @@
 #!/bin/bash
-source common
+source $(dirname $0)/common
 
 say stop containers
 docker stop nred mqtt flux gfna

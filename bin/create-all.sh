@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source common
+source $(dirname $0)/common
 
 # Pull all required docker images
 say get image NodeRED
@@ -37,6 +37,7 @@ docker run \
        nodered/node-red
 
 say run container mqtt
+chmod 0700 $HOME/iot-server/vol/mqtt/config/pwdfile
 docker run \
        --detach \
        --hostname mqtt \
