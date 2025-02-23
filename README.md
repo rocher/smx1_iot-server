@@ -46,11 +46,21 @@ servidor IoT, s'han creat uns _shell scripts_ que fan tota la feina.
 
 ### Procediment
 
+A Ubuntu Server, instal·la `docker` i afegeix el teu usuari al grup `docker`:
+
+```sh
+sudo apt install docker.io
+sudo usermod -aG docker $(id -u)
+```
+
+Reinicia la sessió per activar els canvis. Amb `id` has de veure que el teu
+usuari pertany al grup `docker`.
+
 Clona aquest repositori en el directori `$HOME/iot-server` i executa l'script
 que ho crea tot:
 
 ```sh
 cd
-git clone git@github.com:rocher/smx1_iot-server iot-server
-./bin/create-all.sh
+git clone https://github.com/rocher/smx1_iot-server iot-server
+./iot-server/bin/create-all.sh
 ```
