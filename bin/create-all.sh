@@ -61,8 +61,8 @@ docker run \
        --volume $HOME/iot-server/vol/flux/data:/var/lib/influxdb2 \
        --volume $HOME/iot-server/vol/flux/config:/etc/influxdb2 \
        --env DOCKER_INFLUXDB_INIT_MODE=setup \
-       --env DOCKER_INFLUXDB_INIT_USERNAME=qwe \
-       --env DOCKER_INFLUXDB_INIT_PASSWORD=qweqweqwe \
+       --env DOCKER_INFLUXDB_INIT_USERNAME=admin \
+       --env DOCKER_INFLUXDB_INIT_PASSWORD=admin \
        --env DOCKER_INFLUXDB_INIT_ORG=inspalamos \
        --env DOCKER_INFLUXDB_INIT_BUCKET=smx1 \
        influxdb
