@@ -1,7 +1,8 @@
-.config*
+#.config*
 .npm/
 lib/
 # node_modules/
 package-lock.json
-.flows*
-flows_cred.json
+#.flows*
+#flows_cred.json
+*.backup
