@@ -7,7 +7,7 @@ source $BIN/tools
 
 # Clean unsused and ignored files
 cd $ROOT
-git clean -fnqx
+git clean -dfqx
 cd -
 
 # Pull all required docker images
@@ -38,6 +38,7 @@ docker run \
        --hostname nred \
        --user root \
        --name nred \
+       --user $(id -u) \
        --network iot.net \
        --ip 172.22.0.11 \
        --publish 1880:1880 \
@@ -50,6 +51,7 @@ docker run \
        --detach \
        --hostname mqtt \
        --name mqtt \
+       --user $(id -u) \
        --network iot.net \
        --ip 172.22.0.12 \
        --publish 1883:1883 \
@@ -69,8 +71,8 @@ docker run \
        --volume $VOL/flux/data:/var/lib/influxdb2 \
        --volume $VOL/flux/config:/etc/influxdb2 \
        --env DOCKER_INFLUXDB_INIT_MODE=setup \
-       --env DOCKER_INFLUXDB_INIT_USERNAME=admin \
-       --env DOCKER_INFLUXDB_INIT_PASSWORD=admin \
+       --env DOCKER_INFLUXDB_INIT_USERNAME=qwe \
+       --env DOCKER_INFLUXDB_INIT_PASSWORD=qweqweqwe \
        --env DOCKER_INFLUXDB_INIT_ORG=inspalamos \
        --env DOCKER_INFLUXDB_INIT_BUCKET=smx1 \
        influxdb
