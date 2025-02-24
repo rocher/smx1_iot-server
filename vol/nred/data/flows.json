@@ -41,14 +41,14 @@
     {
         "id": "ce4bdd8437bd28fe",
         "type": "influxdb",
-        "hostname": "127.0.0.1",
+        "hostname": "flux.iot.net",
         "port": 8086,
         "protocol": "http",
-        "database": "database",
+        "database": "smx1",
         "name": "docker influxdb",
         "usetls": false,
         "tls": "",
-        "influxdbVersion": "2.0",
+        "influxdbVersion": "1.x",
         "url": "http://172.19.0.4:8086",
         "timeout": 10,
         "rejectUnauthorized": true
@@ -112,7 +112,7 @@
         "rh": 0,
         "inputs": 0,
         "x": 190,
-        "y": 120,
+        "y": 140,
         "wires": [
             [
                 "0df624b0a337ec1e",
@@ -132,34 +132,14 @@
         "complete": "false",
         "statusVal": "",
         "statusType": "auto",
-        "x": 400,
+        "x": 360,
         "y": 120,
-        "wires": []
-    },
-    {
-        "id": "7518a06f20ef8fda",
-        "type": "influxdb out",
-        "z": "b42d36e0ce0e972f",
-        "d": true,
-        "influxdb": "ce4bdd8437bd28fe",
-        "name": "",
-        "measurement": "test",
-        "precision": "",
-        "retentionPolicy": "",
-        "database": "database",
-        "precisionV18FluxV20": "ms",
-        "retentionPolicyV18Flux": "",
-        "org": "inspalamos",
-        "bucket": "smx1",
-        "x": 710,
-        "y": 840,
         "wires": []
     },
     {
         "id": "272265cba52a03af",
         "type": "inject",
         "z": "b42d36e0ce0e972f",
-        "d": true,
         "name": "",
         "props": [
             {
@@ -170,15 +150,15 @@
                 "vt": "str"
             }
         ],
-        "repeat": "0.5",
+        "repeat": "1",
         "crontab": "",
         "once": false,
         "onceDelay": 0.1,
         "topic": "",
         "payload": "iso",
         "payloadType": "date",
-        "x": 250,
-        "y": 900,
+        "x": 170,
+        "y": 280,
         "wires": [
             [
                 "760561361ed4ac82"
@@ -189,7 +169,6 @@
         "id": "760561361ed4ac82",
         "type": "template",
         "z": "b42d36e0ce0e972f",
-        "d": true,
         "name": "temperatura interna",
         "field": "payload",
         "fieldType": "msg",
@@ -197,8 +176,8 @@
         "syntax": "mustache",
         "template": "{\n    \"cmd\": \"temp_int\"\n}",
         "output": "str",
-        "x": 470,
-        "y": 900,
+        "x": 390,
+        "y": 280,
         "wires": [
             [
                 "3955546ad36a44fc"
@@ -209,7 +188,6 @@
         "id": "3955546ad36a44fc",
         "type": "mqtt out",
         "z": "b42d36e0ce0e972f",
-        "d": true,
         "name": "",
         "topic": "/cmd",
         "qos": "2",
@@ -220,17 +198,16 @@
         "correl": "",
         "expiry": "",
         "broker": "ff746650977c53fc",
-        "x": 710,
-        "y": 900,
+        "x": 610,
+        "y": 300,
         "wires": []
     },
     {
         "id": "a90af9b3a911e57e",
         "type": "mqtt in",
         "z": "b42d36e0ce0e972f",
-        "d": true,
         "name": "",
-        "topic": "/ret/temp/int/#",
+        "topic": "/ret/temp/int",
         "qos": "2",
         "datatype": "json",
         "broker": "ff746650977c53fc",
@@ -238,8 +215,8 @@
         "rap": true,
         "rh": 0,
         "inputs": 0,
-        "x": 210,
-        "y": 1100,
+        "x": 170,
+        "y": 440,
         "wires": [
             [
                 "640f5a2185ed378e"
@@ -250,7 +227,6 @@
         "id": "25bcc097ff456b90",
         "type": "template",
         "z": "b42d36e0ce0e972f",
-        "d": true,
         "name": "temperatura externa",
         "field": "payload",
         "fieldType": "msg",
@@ -258,109 +234,40 @@
         "syntax": "mustache",
         "template": "{\n    \"cmd\": \"temp_ext\"\n}",
         "output": "str",
-        "x": 480,
-        "y": 960,
+        "x": 400,
+        "y": 340,
         "wires": [
             [
-                "52b780518c88c6a8"
+                "3955546ad36a44fc"
             ]
         ]
     },
     {
-        "id": "52b780518c88c6a8",
-        "type": "mqtt out",
+        "id": "640f5a2185ed378e",
+        "type": "function",
         "z": "b42d36e0ce0e972f",
-        "d": true,
-        "name": "",
-        "topic": "/cmd",
-        "qos": "2",
-        "retain": "",
-        "respTopic": "",
-        "contentType": "",
-        "userProps": "",
-        "correl": "",
-        "expiry": "",
-        "broker": "ff746650977c53fc",
-        "x": 710,
-        "y": 960,
-        "wires": []
-    },
-    {
-        "id": "a645586140a4f06a",
-        "type": "inject",
-        "z": "b42d36e0ce0e972f",
-        "d": true,
-        "name": "",
-        "props": [
-            {
-                "p": "payload"
-            },
-            {
-                "p": "topic",
-                "vt": "str"
-            }
-        ],
-        "repeat": "6",
-        "crontab": "",
-        "once": true,
-        "onceDelay": "3",
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "x": 250,
-        "y": 960,
+        "name": "Format temp/int",
+        "func": "let tags = {};\nlet fields = {};\n\ntags.pid = msg.payload.pid;\nfields.value = msg.payload.value;\n\nmsg.measurement = \"temperatura_interna\";\nmsg.payload = [fields, tags];\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 380,
+        "y": 440,
         "wires": [
             [
-                "25bcc097ff456b90"
+                "cd2a92bc2cc75fd0"
             ]
         ]
-    },
-    {
-        "id": "9dbddb3fd52bd09d",
-        "type": "mqtt in",
-        "z": "b42d36e0ce0e972f",
-        "d": true,
-        "name": "",
-        "topic": "/ret/temp/ext",
-        "qos": "2",
-        "datatype": "auto-detect",
-        "broker": "ff746650977c53fc",
-        "nl": false,
-        "rap": true,
-        "rh": 0,
-        "inputs": 0,
-        "x": 210,
-        "y": 1040,
-        "wires": [
-            []
-        ]
-    },
-    {
-        "id": "f85d0554738a546a",
-        "type": "influxdb out",
-        "z": "b42d36e0ce0e972f",
-        "d": true,
-        "influxdb": "ce4bdd8437bd28fe",
-        "name": "",
-        "measurement": "temperatura externa",
-        "precision": "",
-        "retentionPolicy": "",
-        "database": "database",
-        "precisionV18FluxV20": "ms",
-        "retentionPolicyV18Flux": "",
-        "org": "inspalamos",
-        "bucket": "smx1",
-        "x": 580,
-        "y": 1020,
-        "wires": []
     },
     {
         "id": "cd2a92bc2cc75fd0",
         "type": "influxdb out",
         "z": "b42d36e0ce0e972f",
-        "d": true,
         "influxdb": "ce4bdd8437bd28fe",
-        "name": "Influx temperatura_interna",
+        "name": "Influx measurements",
         "measurement": "",
         "precision": "",
         "retentionPolicy": "",
@@ -369,30 +276,9 @@
         "retentionPolicyV18Flux": "",
         "org": "inspalamos",
         "bucket": "smx1",
-        "x": 670,
-        "y": 1100,
+        "x": 620,
+        "y": 480,
         "wires": []
-    },
-    {
-        "id": "640f5a2185ed378e",
-        "type": "function",
-        "z": "b42d36e0ce0e972f",
-        "d": true,
-        "name": "Format data",
-        "func": "let tags = {};\nlet fields = {};\n\ntags.pid = msg.payload.pid;\nfields.value = msg.payload.value;\n\nmsg.measurement = \"temperatura_interna\";\nmsg.payload = [fields, tags];\n\nreturn msg;\n",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 430,
-        "y": 1100,
-        "wires": [
-            [
-                "cd2a92bc2cc75fd0"
-            ]
-        ]
     },
     {
         "id": "b06cd747ccc584de",
@@ -408,8 +294,78 @@
         "retentionPolicyV18Flux": "",
         "org": "inspalamos",
         "bucket": "smx1",
-        "x": 450,
-        "y": 200,
+        "x": 410,
+        "y": 180,
         "wires": []
+    },
+    {
+        "id": "30e9153cf9695747",
+        "type": "mqtt in",
+        "z": "b42d36e0ce0e972f",
+        "name": "",
+        "topic": "/ret/temp/ext",
+        "qos": "2",
+        "datatype": "json",
+        "broker": "ff746650977c53fc",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 170,
+        "y": 500,
+        "wires": [
+            [
+                "0d08ef9f672d8d8d"
+            ]
+        ]
+    },
+    {
+        "id": "0d08ef9f672d8d8d",
+        "type": "function",
+        "z": "b42d36e0ce0e972f",
+        "name": "Format temp/ext",
+        "func": "let tags = {};\nlet fields = {};\n\ntags.pid = msg.payload.pid;\ntags.tid = msg.payload.tid;\nfields.value = msg.payload.value;\n\nmsg.measurement = \"temperatura_externa\";\nmsg.payload = [fields, tags];\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 380,
+        "y": 500,
+        "wires": [
+            [
+                "cd2a92bc2cc75fd0"
+            ]
+        ]
+    },
+    {
+        "id": "6210c19eee252e85",
+        "type": "inject",
+        "z": "b42d36e0ce0e972f",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "3",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "iso",
+        "payloadType": "date",
+        "x": 170,
+        "y": 340,
+        "wires": [
+            [
+                "25bcc097ff456b90"
+            ]
+        ]
     }
 ]
