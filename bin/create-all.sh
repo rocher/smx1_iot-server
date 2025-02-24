@@ -1,6 +1,14 @@
 #!/bin/bash
 
-source $(dirname $0)/common
+BIN=$(realpath $(dirname $0))
+ROOT=$(realpath $BIN/..)
+VOL=$ROOT/vol
+source $BIN/tools
+
+# Clean unsused and ignored files
+cd $ROOT
+git clean -fnqx
+cd -
 
 # Pull all required docker images
 say get image NodeRED
@@ -33,11 +41,11 @@ docker run \
        --network iot.net \
        --ip 172.22.0.11 \
        --publish 1880:1880 \
-       --volume $HOME/iot-server/vol/nred/data:/data \
+       --volume $VOL/nred/data:/data \
        nodered/node-red
 
 say run container mqtt
-chmod 0700 $HOME/iot-server/vol/mqtt/config/pwdfile
+chmod 0700 $VOL/mqtt/config/pwdfile
 docker run \
        --detach \
        --hostname mqtt \
@@ -45,9 +53,9 @@ docker run \
        --network iot.net \
        --ip 172.22.0.12 \
        --publish 1883:1883 \
-       --volume $HOME/iot-server/vol/mqtt/config:/mosquitto/config \
-       --volume $HOME/iot-server/vol/mqtt/data:/mosquitto/data \
-       --volume $HOME/iot-server/vol/mqtt/log:/mosquitto/log \
+       --volume $VOL/mqtt/config:/mosquitto/config \
+       --volume $VOL/mqtt/data:/mosquitto/data \
+       --volume $VOL/mqtt/log:/mosquitto/log \
        eclipse-mosquitto
 
 say run container flux
@@ -58,8 +66,8 @@ docker run \
        --network iot.net \
        --ip 172.22.0.13 \
        --publish 8086:8086 \
-       --volume $HOME/iot-server/vol/flux/data:/var/lib/influxdb2 \
-       --volume $HOME/iot-server/vol/flux/config:/etc/influxdb2 \
+       --volume $VOL/flux/data:/var/lib/influxdb2 \
+       --volume $VOL/flux/config:/etc/influxdb2 \
        --env DOCKER_INFLUXDB_INIT_MODE=setup \
        --env DOCKER_INFLUXDB_INIT_USERNAME=admin \
        --env DOCKER_INFLUXDB_INIT_PASSWORD=admin \
@@ -76,7 +84,7 @@ docker run \
        --network iot.net \
        --ip 172.22.0.14 \
        --publish 3000:3000 \
-       --volume $HOME/iot-server/vol/gfna/data:/var/lib/grafana \
+       --volume $VOL/gfna/data:/var/lib/grafana \
        grafana/grafana
 
 say status
