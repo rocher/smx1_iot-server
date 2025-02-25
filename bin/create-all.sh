@@ -36,9 +36,7 @@ say run container nred
 docker run \
        --detach \
        --hostname nred \
-       --user root \
        --name nred \
-       --user $(id -u) \
        --network iot.net \
        --ip 172.22.0.11 \
        --publish 1880:1880 \
@@ -71,11 +69,23 @@ docker run \
        --volume $VOL/flux/data:/var/lib/influxdb2 \
        --volume $VOL/flux/config:/etc/influxdb2 \
        --env DOCKER_INFLUXDB_INIT_MODE=setup \
-       --env DOCKER_INFLUXDB_INIT_USERNAME=qwe \
-       --env DOCKER_INFLUXDB_INIT_PASSWORD=qweqweqwe \
+       --env DOCKER_INFLUXDB_INIT_USERNAME=admin \
+       --env DOCKER_INFLUXDB_INIT_PASSWORD=admin \
        --env DOCKER_INFLUXDB_INIT_ORG=inspalamos \
        --env DOCKER_INFLUXDB_INIT_BUCKET=smx1 \
        influxdb
+
+say configure container flux
+BUCKET=$(docker exec flux influx bucket ls | \
+             grep smx1 | \
+             sed -e 's/^\([a-z0-9]*\).*/\1/' \
+      )
+docker exec flux influx v1 auth create \
+       --org inspalamos \
+       --username asd \
+       --password asdasdasd \
+       --read-bucket $BUCKET \
+       --write-bucket $BUCKET
 
 say run container gfna
 docker run \
