@@ -70,7 +70,7 @@ docker run \
        --volume $VOL/flux/config:/etc/influxdb2 \
        --env DOCKER_INFLUXDB_INIT_MODE=setup \
        --env DOCKER_INFLUXDB_INIT_USERNAME=admin \
-       --env DOCKER_INFLUXDB_INIT_PASSWORD=admin \
+       --env DOCKER_INFLUXDB_INIT_PASSWORD=admin1234 \
        --env DOCKER_INFLUXDB_INIT_ORG=inspalamos \
        --env DOCKER_INFLUXDB_INIT_BUCKET=smx1 \
        influxdb
