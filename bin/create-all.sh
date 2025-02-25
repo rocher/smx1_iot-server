@@ -75,11 +75,14 @@ docker run \
        --env DOCKER_INFLUXDB_INIT_BUCKET=smx1 \
        influxdb
 
+sleep 2
 say configure container flux
 BUCKET=$(docker exec flux influx bucket ls | \
              grep smx1 | \
              sed -e 's/^\([a-z0-9]*\).*/\1/' \
       )
+
+say create v1 API auth credentials
 docker exec flux influx v1 auth create \
        --org inspalamos \
        --username asd \
