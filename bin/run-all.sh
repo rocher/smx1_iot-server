@@ -10,26 +10,16 @@ cd $ROOT
 git clean -dfqx
 cd -
 
-# Pull all required docker images
-say get image NodeRED
-docker pull nodered/node-red
-
-say get image Eclipse-Mosquitto
-docker pull eclipse-mosquitto
-
-say get image InfluxDB
-docker pull influxdb
-
-say get image Grafana
-docker pull grafana/grafana
-
 # Create iot.net network
-say create network iot.net
-docker network create \
-       --driver bridge \
-       --subnet 172.22.0.0/16 \
-       --gateway 172.22.0.1 \
-       iot.net
+docker network ls | grep -q iot.net
+if [ $? != 0 ]; then
+       say create network iot.net
+       docker network create \
+              --driver bridge \
+              --subnet 172.22.0.0/16 \
+              --gateway 172.22.0.1 \
+              iot.net
+fi
 
 # Run all required docker containers
 say run container nred
