@@ -3,7 +3,7 @@
 LAST_MINUTE=100
 LAST_VALUE=0
 
-function mqtt_send_ext() {
+function mqtt_send() {
     # $1 => subtopic: int or ext
     # $2 => pid
     # $3 => value, format x.y (e.g. 20.1)
