@@ -5,10 +5,17 @@ ROOT=$(realpath $BIN/..)
 VOL=$ROOT/vol
 source $BIN/tools
 
-# Clean unsused and ignored files
+# Clean untracked and ignored files
 cd $ROOT
 git clean -dfqx
 cd -
+
+# Restore modified files
+FILES=$(git status | grep modified | sed -e 's/^.*:[ \t]*\([^ \t]*\)$/\1/')
+if [ -n "$FILES" ]; then
+       say restore modified files
+       git restore $FILES
+fi
 
 # Create iot.net network
 docker network ls | grep -q iot.net
