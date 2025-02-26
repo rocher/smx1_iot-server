@@ -14,5 +14,5 @@ docker pull influxdb
 say get image Grafana
 docker pull grafana/grafana
 
-echo
+say status
 docker images
