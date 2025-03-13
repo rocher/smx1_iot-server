@@ -1,5 +1,19 @@
 #!/bin/bash
 
+# Parameter $1 must be GROUP, which must be an integer between 0 and 203
+if [ -z "$1" ]; then
+       echo "Usage: $0 GROUP"
+       echo "       GROUP must be an integer between 0 and 203"
+       echo "       GROUPS 0 and 200 are reserved for development"
+       exit 1
+fi
+
+if [ $1 -lt 0 ] || [ $1 -gt 203 ]; then
+       echo "GROUP must be an integer between 0 and 203"
+       exit 1
+fi
+
+G=$1
 BIN=$(realpath $(dirname $0))
 ROOT=$(realpath $BIN/..)
 VOL=$ROOT/vol
@@ -23,8 +37,8 @@ if [ $? != 0 ]; then
        say create network iot.net
        docker network create \
               --driver bridge \
-              --subnet 172.22.0.0/16 \
-              --gateway 172.22.0.1 \
+              --subnet 172.22.${G}.0/8 \
+              --gateway 172.22.${G}.1 \
               iot.net
 fi
 
@@ -35,7 +49,7 @@ docker run \
        --hostname nred \
        --name nred \
        --network iot.net \
-       --ip 172.22.0.11 \
+       --ip 172.22.${G}.11 \
        --publish 1880:1880 \
        --volume $VOL/nred/data:/data \
        nodered/node-red
@@ -48,7 +62,7 @@ docker run \
        --name mqtt \
        --user $(id -u) \
        --network iot.net \
-       --ip 172.22.0.12 \
+       --ip 172.22.${G}.12 \
        --publish 1883:1883 \
        --volume $VOL/mqtt/config:/mosquitto/config \
        --volume $VOL/mqtt/data:/mosquitto/data \
@@ -61,7 +75,7 @@ docker run \
        --hostname flux \
        --name flux \
        --network iot.net \
-       --ip 172.22.0.13 \
+       --ip 172.22.${G}.13 \
        --publish 8086:8086 \
        --volume $VOL/flux/data:/var/lib/influxdb2 \
        --volume $VOL/flux/config:/etc/influxdb2 \
@@ -94,7 +108,7 @@ docker run \
        --name gfna \
        --user $(id -u) \
        --network iot.net \
-       --ip 172.22.0.14 \
+       --ip 172.22.${G}.14 \
        --publish 3000:3000 \
        --volume $VOL/gfna/data:/var/lib/grafana \
        grafana/grafana
