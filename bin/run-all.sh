@@ -8,27 +8,27 @@ if [ -z "$1" ]; then
        exit 1
 fi
 
-if [ $1 -lt 0 ] || [ $1 -gt 203 ]; then
+if [ "$1" -lt 0 ] || [ "$1" -gt 203 ]; then
        echo "GROUP must be an integer between 0 and 203"
        exit 1
 fi
 
 G=$1
-BIN=$(realpath $(dirname $0))
-ROOT=$(realpath $BIN/..)
-VOL=$ROOT/vol
-source $BIN/tools
+BIN=$(realpath "$(dirname $0)")
+ROOT=$(realpath "$BIN"/..)
+VOL="$ROOT/vol"
+source "$BIN/tools"
 
 # Clean untracked and ignored files
-cd $ROOT
+cd "$ROOT" || exit 1
 git clean -dfqx
-cd -
+cd - || exit 1
 
 # Restore modified files
 FILES=$(git status | grep modified | sed -e 's/^.*:[ \t]*\([^ \t]*\)$/\1/')
 if [ -n "$FILES" ]; then
        say restore modified files
-       git restore $FILES
+       git restore "$FILES"
 fi
 
 # Create iot.net network
@@ -37,8 +37,8 @@ if [ $? != 0 ]; then
        say create network iot.net
        docker network create \
               --driver bridge \
-              --subnet 172.22.${G}.0/8 \
-              --gateway 172.22.${G}.1 \
+              --subnet 172.22."${G}".0/8 \
+              --gateway 172.22."${G}".1 \
               iot.net
 fi
 
@@ -49,9 +49,9 @@ docker run \
        --hostname nred \
        --name nred \
        --network iot.net \
-       --ip 172.22.${G}.11 \
+       --ip 172.22."${G}".11 \
        --publish 1880:1880 \
-       --volume $VOL/nred/data:/data \
+       --volume "$VOL/nred/data:/data" \
        nodered/node-red
 
 say run container mqtt
@@ -60,13 +60,13 @@ docker run \
        --detach \
        --hostname mqtt \
        --name mqtt \
-       --user $(id -u) \
+       --user "$(id -u)" \
        --network iot.net \
-       --ip 172.22.${G}.12 \
+       --ip 172.22."${G}".12 \
        --publish 1883:1883 \
-       --volume $VOL/mqtt/config:/mosquitto/config \
-       --volume $VOL/mqtt/data:/mosquitto/data \
-       --volume $VOL/mqtt/log:/mosquitto/log \
+       --volume "$VOL/mqtt/config:/mosquitto/config" \
+       --volume "$VOL/mqtt/data:/mosquitto/data" \
+       --volume "$VOL/mqtt/log:/mosquitto/log" \
        eclipse-mosquitto
 
 say run container flux
@@ -75,10 +75,10 @@ docker run \
        --hostname flux \
        --name flux \
        --network iot.net \
-       --ip 172.22.${G}.13 \
+       --ip 172.22."${G}".13 \
        --publish 8086:8086 \
-       --volume $VOL/flux/data:/var/lib/influxdb2 \
-       --volume $VOL/flux/config:/etc/influxdb2 \
+       --volume "$VOL/flux/data:/var/lib/influxdb2" \
+       --volume "$VOL/flux/config:/etc/influxdb2" \
        --env DOCKER_INFLUXDB_INIT_MODE=setup \
        --env DOCKER_INFLUXDB_INIT_USERNAME=admin \
        --env DOCKER_INFLUXDB_INIT_PASSWORD=admin1234 \
@@ -98,19 +98,19 @@ docker exec flux influx v1 auth create \
        --org inspalamos \
        --username asd \
        --password asdasdasd \
-       --read-bucket $BUCKET \
-       --write-bucket $BUCKET
+       --read-bucket "$BUCKET" \
+       --write-bucket "$BUCKET"
 
 say run container gfna
 docker run \
        --detach \
        --hostname gfna \
        --name gfna \
-       --user $(id -u) \
+       --user "$(id -u)" \
        --network iot.net \
-       --ip 172.22.${G}.14 \
+       --ip 172.22."${G}".14 \
        --publish 3000:3000 \
-       --volume $VOL/gfna/data:/var/lib/grafana \
+       --volume "$VOL/gfna/data:/var/lib/grafana" \
        grafana/grafana
 
 say status
