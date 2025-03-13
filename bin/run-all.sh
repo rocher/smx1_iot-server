@@ -87,17 +87,16 @@ docker run \
        influxdb
 
 say configure container flux
-RET=-10
-while $RET; do
-       if [ $RET -ge 0 ]; then
-              echo -n .
-       fi
-       BUCKET=$(docker exec flux influx bucket ls 2> /dev/null \
+RET=1
+while [ $RET -gt 0 ]; do
+       echo -n .
+       BUCKET_LIST=$(docker exec flux influx bucket ls 2> /dev/null)
+       RET="$?"
+       BUCKET=$(echo "$BUCKET_LIST" \
               | grep smx1 \
               | sed -e 's/^\([a-z0-9]*\).*/\1/' \
        )
-       RET="$?"
-       sleep 1
+       [ $RET -gt 0 ] && sleep 1
 done
 echo
 say BUCKET found: "$BUCKET"
