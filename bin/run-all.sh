@@ -86,12 +86,20 @@ docker run \
        --env DOCKER_INFLUXDB_INIT_BUCKET=smx1 \
        influxdb
 
-sleep 5
 say configure container flux
-BUCKET=$(docker exec flux influx bucket ls | \
-             grep smx1 | \
-             sed -e 's/^\([a-z0-9]*\).*/\1/' \
-      )
+RET=-10
+while $RET; do
+       if [ $RET -ge 0 ]; then
+              echo -n .
+       fi
+       BUCKET=$(docker exec flux influx bucket ls 2> /dev/null \
+              | grep smx1 \
+              | sed -e 's/^\([a-z0-9]*\).*/\1/' \
+       )
+       RET="$?"
+       sleep 1
+done
+echo
 say BUCKET found: "$BUCKET"
 
 say create v1 API auth credentials
