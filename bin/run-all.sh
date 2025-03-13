@@ -32,8 +32,8 @@ if [ -n "$FILES" ]; then
 fi
 
 # Create iot.net network
-docker network ls | grep -q iot.net
-if [ $? != 0 ]; then
+if ! docker network ls | grep -q iot.net; then
+#if [ $? != 0 ]; then
        say create network iot.net
        docker network create \
               --driver bridge \
@@ -55,7 +55,7 @@ docker run \
        nodered/node-red
 
 say run container mqtt
-chmod 0700 $VOL/mqtt/config/pwdfile
+chmod 0700 "$VOL/mqtt/config/pwdfile"
 docker run \
        --detach \
        --hostname mqtt \
@@ -86,12 +86,13 @@ docker run \
        --env DOCKER_INFLUXDB_INIT_BUCKET=smx1 \
        influxdb
 
-sleep 2
+sleep 5
 say configure container flux
 BUCKET=$(docker exec flux influx bucket ls | \
              grep smx1 | \
              sed -e 's/^\([a-z0-9]*\).*/\1/' \
       )
+say BUCKET found: "$BUCKET"
 
 say create v1 API auth credentials
 docker exec flux influx v1 auth create \
