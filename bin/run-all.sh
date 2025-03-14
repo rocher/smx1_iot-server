@@ -81,7 +81,7 @@ docker run \
        --volume "$VOL/flux/config:/etc/influxdb2" \
        --env DOCKER_INFLUXDB_INIT_MODE=setup \
        --env DOCKER_INFLUXDB_INIT_USERNAME=admin \
-       --env DOCKER_INFLUXDB_INIT_PASSWORD=admin1234 \
+       --env DOCKER_INFLUXDB_INIT_PASSWORD=qweqweqwe \
        --env DOCKER_INFLUXDB_INIT_ORG=inspalamos \
        --env DOCKER_INFLUXDB_INIT_BUCKET=smx1 \
        influxdb
@@ -107,7 +107,7 @@ docker exec flux influx v1 auth create \
        --username asd \
        --password asdasdasd \
        --read-bucket "$BUCKET" \
-       --write-bucket "$BUCKET"
+       --write-bucket "$BUCKET" 2> /dev/null
 
 say run container gfna
 docker run \
