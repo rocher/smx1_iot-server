@@ -37,7 +37,7 @@ if ! docker network ls | grep -q iot.net; then
        say create network iot.net
        docker network create \
               --driver bridge \
-              --subnet 172.22."${G}".0/16 \
+              --subnet 172.22.0.0/16 \
               --gateway 172.22."${G}".1 \
               iot.net
 fi
