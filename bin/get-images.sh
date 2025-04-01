@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source $(dirname $0)/tools
+source "$(dirname $0)/tools"
 
 say get image NodeRED
 docker pull nodered/node-red
