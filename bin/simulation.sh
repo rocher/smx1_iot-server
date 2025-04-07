@@ -3,11 +3,8 @@
 LAST_MINUTE=100
 LAST_VALUE=0
 
-function mqtt_send() {
-    # $1 => subtopic: int or ext
-    # $2 => pid
-    # $3 => value, format x.y (e.g. 20.1)
-    # $4 => tid, only for ext
+function randomize_value() {
+    # $1 => value
 
     MINUTE=$(date +%M)
     if [ "$MINUTE" == "$LAST_MINUTE" ]; then
@@ -17,6 +14,13 @@ function mqtt_send() {
         LAST_VALUE=$VALUE
         LAST_MINUTE=$MIN
     fi
+}
+
+function mqtt_send() {
+    # $1 => subtopic: int or ext
+    # $2 => pid
+    # $3 => value, format x.y (e.g. 20.1)
+    # $4 => tid, only for ext
 
     MESSAGE=""
     if [ "$1" == "int" ]; then
@@ -34,14 +38,16 @@ function mqtt_send() {
             --password qwe
 }
 
+START=$(date +%s)
 while true; do
-    mqtt_send int sim_one 24.3
-    mqtt_send int sim_two 29.5
+    INC=$(echo "7/1+l($(date +%s) - $START + 2)" | bc -l)
+    mqtt_send int sim_one $(echo "24.7 - $INC" | bc -l)
+    mqtt_send int sim_two $(echo "29.5 - $INC" | bc -l)
 
-    mqtt_send ext sim_one 20.11 dht22
-    mqtt_send ext sim_one 20.15 ds180
-    mqtt_send ext sim_one 20.16 ds181
+    mqtt_send ext sim_one $(randomize_value 20.11) dht22
+    mqtt_send ext sim_one $(randomize_value 20.15) ds180
+    mqtt_send ext sim_one $(randomize_value 20.16) ds181
 
-    mqtt_send ext sim_two 20.19 dht22
-    mqtt_send ext sim_two 20.12 ds182
+    mqtt_send ext sim_two $(randomize_value 20.26) dht22
+    mqtt_send ext sim_two $(randomize_value 20.07) ds182
 done
