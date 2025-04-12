@@ -10,10 +10,11 @@ function randomize_value() {
     if [ "$MINUTE" == "$LAST_MINUTE" ]; then
         VALUE=$LAST_VALUE
     else
-        VALUE=${3}${RANDOM}
+        VALUE=${1}${RANDOM}
         LAST_VALUE=$VALUE
         LAST_MINUTE=$MIN
     fi
+    echo $VALUE
 }
 
 function mqtt_send() {
@@ -24,9 +25,9 @@ function mqtt_send() {
 
     MESSAGE=""
     if [ "$1" == "int" ]; then
-        MESSAGE='{"pid": "'${2}'", "value": '${VALUE}'}'
+        MESSAGE='{"pid": "'${2}'", "value": '${3}'}'
     else
-        MESSAGE='{"pid": "'${2}'", "tid": "'${4}'", "value": '${VALUE}'}'
+        MESSAGE='{"pid": "'${2}'", "tid": "'${4}'", "value": '${3}'}'
     fi
 
     docker exec nred \
@@ -40,9 +41,9 @@ function mqtt_send() {
 
 START=$(date +%s)
 while true; do
-    INC=$(echo "7/1+l($(date +%s) - $START + 2)" | bc -l)
-    mqtt_send int sim_one $(echo "24.7 - $INC" | bc -l)
-    mqtt_send int sim_two $(echo "29.5 - $INC" | bc -l)
+    INC=$(echo "l($(date +%s) - $START + 2)" | bc -l)
+    mqtt_send int sim_one $(echo "24.7 + $INC" | bc -l)
+    mqtt_send int sim_two $(echo "22.5 + $INC" | bc -l)
 
     mqtt_send ext sim_one $(randomize_value 20.11) dht22
     mqtt_send ext sim_one $(randomize_value 20.15) ds180
@@ -50,4 +51,6 @@ while true; do
 
     mqtt_send ext sim_two $(randomize_value 20.26) dht22
     mqtt_send ext sim_two $(randomize_value 20.07) ds182
+
+    sleep 1
 done
